@@ -30,28 +30,30 @@ namespace CoffeeVendingMachineAPI.Services
 
         public async Task<CoffeeOrder> CreateOrderAsync(int? coffeeTypeId, string? externalCoffeeName, List<int> customizationIds)
         {
-            if (coffeeTypeId == null && string.IsNullOrWhiteSpace(externalCoffeeName))
-                throw new Exception("An internal or external coffee type is required.");
+            CoffeeType? coffeeType = await _repository.GetCoffeeTypeByIdAsync(coffeeTypeId.Value);
+            List<CoffeeCustomization> customizations = await _repository.GetCustomizationsByIdsAsync(customizationIds);
+            CoffeeOrder coffeeOrder = null;
 
-            CoffeeType? coffeeType = null;
-
-            if (string.IsNullOrWhiteSpace(externalCoffeeName))
+            if (coffeeType == null)
             {
-                coffeeType = await _repository.GetCoffeeTypeByIdAsync(coffeeTypeId.Value);
-                if (coffeeType == null)
-                    throw new Exception("Internal coffee type not found.");
+                coffeeOrder = new CoffeeOrder
+                {
+                    CoffeeType = null,
+                    ExternalCoffeeName = externalCoffeeName,
+                    Customizations = customizations
+                };
+            }
+            else
+            {
+                coffeeOrder = new CoffeeOrder
+                {
+                    CoffeeType = coffeeType,
+                    ExternalCoffeeName = null,
+                    Customizations = customizations
+                };
             }
 
-            var customizations = await _repository.GetCustomizationsByIdsAsync(customizationIds);
-
-            var order = new CoffeeOrder
-            {
-                CoffeeType = coffeeType,
-                ExternalCoffeeName = coffeeType == null ? externalCoffeeName : null,
-                Customizations = customizations
-            };
-
-            return await _repository.AddOrderAsync(order);
+            return await _repository.AddOrderAsync(coffeeOrder);
         }
 
     }
