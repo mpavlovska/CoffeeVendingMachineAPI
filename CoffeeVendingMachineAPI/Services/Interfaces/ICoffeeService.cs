@@ -6,6 +6,6 @@ namespace CoffeeVendingMachineAPI.Services.Interfaces
     {
         Task<IEnumerable<CoffeeType>> GetCoffeeTypesAsync();
         Task<IEnumerable<CoffeeCustomization>> GetCustomizationsAsync();
-        Task<CoffeeOrder> CreateOrderAsync(int coffeeTypeId, List<int> customizationIds);
+        Task<CoffeeOrder> CreateOrderAsync(int? coffeeTypeId, string? externalCoffeeName, List<int> customizationIds);
     }
 }

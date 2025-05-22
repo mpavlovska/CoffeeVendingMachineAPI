@@ -10,9 +10,5 @@ namespace CoffeeVendingMachineAPI.Models.External
 
         public string Description { get; set; } = string.Empty;
 
-        [JsonIgnore]
-        public List<string>? Ingredients { get; set; }
-
-        public string? Image { get; set; }
     }
 }

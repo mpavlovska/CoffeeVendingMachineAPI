@@ -24,7 +24,11 @@ export default function OrderForm() {
   const submit = async () => {
     try {
       setLoading(true);
-      await postOrder(selectedCoffee, selectedCustomizations);
+
+      const coffee = coffeeTypes.find((c) => c.id === selectedCoffee);
+      const payload = { coffeeTypeId: coffee.id, externalCoffeeName: coffee?.name, customizationIds: selectedCustomizations };
+
+      await postOrder(payload);
 
       setModalOpen(true);
       setBrewProgress(0);
